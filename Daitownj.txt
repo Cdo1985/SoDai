@@ -1,0 +1,56 @@
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter
+
+story_text = """
+🌈🐉 “The Town of DAI” — A Kid-Friendly Story
+
+Once upon a time, in a magical land, there was a bustling town called DAI Town.
+The people of DAI Town had a very special money that never changed value, no matter what.
+But keeping money stable is hard… so the town was full of helpful characters who worked together.
+
+🏛️ The Big Vault Hall (the Vat)
+In the middle of town stood the Big Vault Hall, a giant building where all the treasure records were kept.
+It didn’t talk. It didn’t smile. It just wrote things down exactly as they were.
+
+👁️ The Price Wizards (Oracles)
+High on a hill lived the Price Wizards. They watched the outside world through magical telescopes.
+They shouted down to the town: “Today a shiny coin is worth THIS much!”
+
+🏰 The Treasure Rooms (Vaults)
+People could bring their shiny things—gold, gems, magic coins—to the Treasure Rooms.
+They said: “Please keep this safe. Can I borrow some DAI?”
+If treasure lost value, the town might need to sell it to stay safe.
+
+🚛 The Auction Rangers (Liquidators)
+If someone’s treasure dropped too much, the Auction Rangers rode in with wagons.
+“We must sell this treasure to keep DAI Town safe!”
+
+🏦 The Savings Fountain (DSR)
+A glowing fountain let people put in DAI and grow more DAI over time.
+
+🧙 The Council of MKR Wizards (Governance)
+The MKR Wizards voted on important rules: how much people could borrow, which treasure rooms could open, and how fast the fountain grows.
+
+💼 The Helpful Helpers (Proxies)
+Booths near the Vault Hall helped people open treasure rooms, borrow DAI, or repay loans without dealing with the giant ledger.
+
+🛑 The Great Freeze Button (Emergency Shutdown)
+A giant red button could freeze time if danger struck. Everyone would get their fair share of treasure back, and the town would rebuild.
+
+✨ The End
+That’s how DAI Town stays safe, stable, and helpful—through magic, teamwork, and a giant book that never lies.
+"""
+
+styles = getSampleStyleSheet()
+doc = SimpleDocTemplate("/mnt/data/DAI_Town_Kids_Story.pdf", pagesize=letter)
+story = []
+
+for line in story_text.split("\n"):
+    if line.strip():
+        story.append(Paragraph(line, styles["Normal"]))
+        story.append(Spacer(1, 12))
+
+doc.build(story)
+
+"/mnt/data/DAI_Town_Kids_Story.pdf"

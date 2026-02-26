@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Town of DAI - Interactive Story</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .story-content {
+            padding: 40px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .story-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .story-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .story-section.active {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .story-section h2 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .story-section .icon {
+            font-size: 1.5em;
+        }
+
+        .story-section p {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .story-section.active p {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .intro-section p {
+            font-size: 1.2em;
+            color: #333;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 40px;
+            background: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-family: inherit;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .ending-section {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .ending-section.show {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .ending-section h2 {
+            font-size: 2.2em;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .ending-section p {
+            font-size: 1.3em;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .character-count {
+            text-align: center;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .expand-hint {
+            font-size: 0.9em;
+            color: #888;
+            font-style: italic;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .story-content {
+                padding: 20px;
+            }
+
+            .controls {
+                flex-direction: column;
+                padding: 15px 20px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏰 The Town of DAI 🏰</h1>
+            <p>A Magical Adventure in Money Land</p>
+        </div>
+
+        <div class="story-content" id="storyContent">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="character-count" id="characterCount">Characters Discovered: 0 / 9</div>
+
+            <div class="intro-section">
+                <p><strong>Once upon a time</strong>, in a magical land, there was a bustling town called <strong>DAI Town</strong>.</p>
+                <p>The people of DAI Town had a very special money that <strong>never changed value</strong>, no matter what.</p>
+                <p>But keeping money stable is hard... so the town was full of helpful characters who worked together.</p>
+                <p class="expand-hint">👇 Click on each character below to learn their story! 👇</p>
+            </div>
+
+            <div class="story-section" data-character="vault">
+                <h2><span class="icon">🏛️</span> The Big Vault Hall (the Vat)</h2>
+                <p>In the middle of town stood the <strong>Big Vault Hall</strong>, a giant building where all the treasure records were kept.</p>
+                <p>It didn't talk. It didn't smile. It just wrote things down <strong>exactly as they were</strong>.</p>
+            </div>
+
+            <div class="story-section" data-character="wizards">
+                <h2><span class="icon">🔮</span> The Price Wizards (Oracles)</h2>
+                <p>High on a hill lived the <strong>Price Wizards</strong>. They watched the outside world through magical telescopes.</p>
+                <p>They shouted down to the town: <em>"Today a shiny coin is worth THIS much!"</em></p>
+            </div>
+
+            <div class="story-section" data-character="treasure">
+                <h2><span class="icon">💎</span> The Treasure Rooms (Vaults)</h2>
+                <p>People could bring their shiny things—<strong>gold, gems, magic coins</strong>—to the Treasure Rooms.</p>
+                <p>They said: <em>"Please keep this safe. Can I borrow some DAI?"</em></p>
+                <p>If treasure lost value, the town might need to sell it to stay safe.</p>
+            </div>
+
+            <div class="story-section" data-character="rangers">
+                <h2><span class="icon">🤠</span> The Auction Rangers (Liquidators)</h2>
+                <p>If someone's treasure dropped too much, the <strong>Auction Rangers</strong> rode in with wagons.</p>
+                <p><em>"We must sell this treasure to keep DAI Town safe!"</em></p>
+            </div>
+
+            <div class="story-section" data-character="fountain">
+                <h2><span class="icon">⛲</span> The Savings Fountain (DSR)</h2>
+                <p>A glowing fountain let people put in DAI and <strong>grow more DAI over time</strong>.</p>
+            </div>
+
+            <div class="story-section" data-character="council">
+                <h2><span class="icon">🧙</span> The Council of MKR Wizards (Governance)</h2>
+                <p>The <strong>MKR Wizards</strong> voted on important rules: how much people could borrow, which treasure rooms could open, and how fast the fountain grows.</p>
+            </div>
+
+            <div class="story-section" data-character="helpers">
+                <h2><span class="icon">🎪</span> The Helpful Helpers (Proxies)</h2>
+                <p>Booths near the Vault Hall helped people open treasure rooms, borrow DAI, or repay loans <strong>without dealing with the giant ledger</strong>.</p>
+            </div>
+
+            <div class="story-section" data-character="button">
+                <h2><span class="icon">🔴</span> The Great Freeze Button (Emergency Shutdown)</h2>
+                <p>A giant red button could <strong>freeze time</strong> if danger struck. Everyone would get their fair share of treasure back, and the town would rebuild.</p>
+            </div>
+
+            <div class="ending-section" id="endingSection">
+                <h2>🌟 The End 🌟</h2>
+                <p>That's how <strong>DAI Town</strong> stays safe, stable, and helpful—through <strong>magic, teamwork, and a giant book that never lies</strong>.</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="expandAllBtn">📖 Expand All Stories</button>
+            <button class="btn btn-secondary" id="collapseAllBtn">📕 Collapse All</button>
+            <button class="btn btn-success" id="showEndingBtn">✨ Show Ending</button>
+        </div>
+    </div>
+
+    <script>
+        const storySections = document.querySelectorAll('.story-section');
+        const expandAllBtn = document.getElementById('expandAllBtn');
+        const collapseAllBtn = document.getElementById('collapseAllBtn');
+        const showEndingBtn = document.getElementById('showEndingBtn');
+        const endingSection = document.getElementById('endingSection');
+        const progressFill = document.getElementById('progressFill');
+        const characterCount = document.getElementById('characterCount');
+        
+        let discoveredCharacters = new Set();
+        const totalCharacters = storySections.length;
+
+        function updateProgress() {
+            const percentage = (discoveredCharacters.size / totalCharacters) * 100;
+            progressFill.style.width = percentage + '%';
+            characterCount.textContent = `Characters Discovered: ${discoveredCharacters.size} / ${totalCharacters}`;
+            
+            if (discoveredCharacters.size === totalCharacters) {
+                showEndingBtn.style.animation = 'pulse 1s infinite';
+            }
+        }
+
+        storySections.forEach(section => {
+            section.addEventListener('click', () => {
+                const isActive = section.classList.contains('active');
+                
+                if (!isActive) {
+                    section.classList.add('active');
+                    const characterId = section.getAttribute('data-character');
+                    discoveredCharacters.add(characterId);
+                    updateProgress();
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        });
+
+        expandAllBtn.addEventListener('click', () => {
+            storySections.forEach(section => {
+                section.classList.add('active');
+                const characterId = section.getAttribute('data-character');
+                discoveredCharacters.add(characterId);
+            });
+            updateProgress();
+        });
+
+        collapseAllBtn.addEventListener('click', () => {
+            storySections.forEach(section => {
+                section.classList.remove('active');
+            });
+        });
+
+        showEndingBtn.addEventListener('click', () => {
+            endingSection.classList.add('show');
+            endingSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+
+        // Add pulse animation for the ending button
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
